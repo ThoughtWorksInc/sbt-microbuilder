@@ -1,5 +1,5 @@
 organization := "com.thoughtworks"
 
-name := "sbt-rest-rpc"
+name := "sbt-microbuilder"
 
 sbtPlugin := true

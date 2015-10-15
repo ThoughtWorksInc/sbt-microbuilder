@@ -1,4 +1,4 @@
-package com.thoughtworks.m
+package com.thoughtworks.microbuilder
 
 import sbt.AutoPlugin
 
