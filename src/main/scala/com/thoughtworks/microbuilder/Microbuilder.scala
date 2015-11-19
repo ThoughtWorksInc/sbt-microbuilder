@@ -32,6 +32,7 @@ object Microbuilder extends AutoPlugin {
     val jsonStreamDeserializer = taskKey[File]("Generates deserizlier for models.")
     val jsonStreamSerializer = taskKey[File]("Generates serizlier for models.")
     val outgoingProxyFactoryGen = taskKey[File]("Generates outgoing proxy factory")
+    val routeConfigurationFactoryGen = taskKey[File]("Generates route configuration factory")
 
     val className = settingKey[String]("Class name of a specific generating class.")
   }
@@ -43,7 +44,8 @@ object Microbuilder extends AutoPlugin {
   override def globalSettings = Seq(
     className in jsonStreamDeserializer := "MicrobuilderDeserializer" ,
     className in jsonStreamSerializer := "MicrobuilderSerializer",
-    className in outgoingProxyFactoryGen := "MicrobuilderOutgoingProxyFactory"
+    className in outgoingProxyFactoryGen := "MicrobuilderOutgoingProxyFactory",
+    className in routeConfigurationFactoryGen := "MicrobuilderRouteConfigurationFactory"
   )
 
 
@@ -121,6 +123,23 @@ class $classNameValue {}
 
       writeFile(outputFile, content)
     },
+    routeConfigurationFactoryGen := {
+      val modelPath = getModelDir(baseDirectory.value, "rpc")
+      val modelNames = getAllModelNamesFrom(modelPath, "rpc").mkString(",")
+      val packagePath = getOutputDir((sourceManaged in Haxe).value)
+      packagePath.mkdirs()
+      val classNameValue = (className in routeConfigurationFactoryGen).value
+      val fileName = s"${classNameValue}.hx"
+      val outputFile = packagePath / fileName
+      val content =
+        raw"""package $packageNameValue;
+@:nativeGen
+@:build(com.thoughtworks.microbuilder.core.RouteConfigurationFactory.generateRouteConfigurationFactory([${modelNames}]))
+class $classNameValue {}
+"""
+
+      writeFile(outputFile, content)
+    },
     sourceGenerators in Haxe <+= Def.task {
       Seq(jsonStreamDeserializer.value)
     },
@@ -129,6 +148,9 @@ class $classNameValue {}
     },
     sourceGenerators in Haxe <+= Def.task {
       Seq(outgoingProxyFactoryGen.value)
+    },
+    sourceGenerators in Haxe <+= Def.task {
+      Seq(routeConfigurationFactoryGen.value)
     }
   )
 }
