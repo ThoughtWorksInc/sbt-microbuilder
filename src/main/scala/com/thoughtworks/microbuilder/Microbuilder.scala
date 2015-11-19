@@ -31,6 +31,7 @@ object Microbuilder extends AutoPlugin {
   object autoImport {
     val jsonStreamDeserializer = taskKey[File]("Generates deserizlier for models.")
     val jsonStreamSerializer = taskKey[File]("Generates serizlier for models.")
+    val outgoingProxyFactoryGen = taskKey[File]("Generates outgoing proxy factory")
 
     val className = settingKey[String]("Class name of a specific generating class.")
   }
@@ -41,7 +42,8 @@ object Microbuilder extends AutoPlugin {
 
   override def globalSettings = Seq(
     className in jsonStreamDeserializer := "MicrobuilderDeserializer" ,
-    className in jsonStreamSerializer := "MicrobuilderSerializer"
+    className in jsonStreamSerializer := "MicrobuilderSerializer",
+    className in outgoingProxyFactoryGen := "MicrobuilderOutgoingProxyFactory"
   )
 
 
@@ -99,11 +101,34 @@ class $classNameValue {}
 
       writeFile(outputFile, content)
     },
+    outgoingProxyFactoryGen := {
+      val modelPath = getModelDir(baseDirectory.value, "rpc")
+      val modelNames = getAllModelNamesFrom(modelPath, "rpc").mkString(",")
+      val packagePath = getOutputDir((sourceManaged in Haxe).value)
+      packagePath.mkdirs()
+      val classNameValue = (className in outgoingProxyFactoryGen).value
+      val fileName = s"${classNameValue}.hx"
+      val outputFile = packagePath / fileName
+      val content =
+        raw"""package $packageNameValue;
+using jsonStream.Plugins;
+using proxy.MicrobuilderDeserializer;
+using proxy.MicrobuilderSerializer;
+@:nativeGen
+@:build(jsonStream.rpc.OutgoingProxyFactory.generateOutgoingProxyFactory([${modelNames}]))
+class $classNameValue {}
+"""
+
+      writeFile(outputFile, content)
+    },
     sourceGenerators in Haxe <+= Def.task {
       Seq(jsonStreamDeserializer.value)
     },
     sourceGenerators in Haxe <+= Def.task {
       Seq(jsonStreamSerializer.value)
+    },
+    sourceGenerators in Haxe <+= Def.task {
+      Seq(outgoingProxyFactoryGen.value)
     }
   )
 }
