@@ -8,8 +8,29 @@ import sbt.Keys._
 
 object Microbuilder extends AutoPlugin {
 
+  val packageNameValue = "proxy"
+
+  def getModelDir(baseDir: File, subDir: String): File ={
+    baseDir/ s"src/haxe/${subDir}"
+  }
+
+  def getOutputDir(baseDir: File):File={
+    packageNameValue.split('.').foldLeft(baseDir) { (parent, path) =>
+      parent / path
+    }
+  }
+  def writeFile(outPutFile: File, content: String)={
+    if (!outPutFile.exists || content != IO.read(outPutFile, scala.io.Codec.UTF8.charSet)) {
+      IO.write(outPutFile, content, scala.io.Codec.UTF8.charSet)
+    }
+    outPutFile
+  }
+  def getAllModelNamesFrom(modelPath: File, packageName: String): Array[String] ={
+    modelPath.list.map("\""+packageName+"."+_.replaceFirst("[.][^.]+$", "")+"\"")
+  }
   object autoImport {
-    val jsonStreamDeserializer = taskKey[File]("Generates deserizlier for model.")
+    val jsonStreamDeserializer = taskKey[File]("Generates deserizlier for models.")
+    val jsonStreamSerializer = taskKey[File]("Generates serizlier for models.")
 
     val className = settingKey[String]("Class name of a specific generating class.")
   }
@@ -19,7 +40,8 @@ object Microbuilder extends AutoPlugin {
   override def requires = HaxeJavaPlugin
 
   override def globalSettings = Seq(
-    className in jsonStreamDeserializer := "MicrobuilderDeserializer"
+    className in jsonStreamDeserializer := "MicrobuilderDeserializer" ,
+    className in jsonStreamSerializer := "MicrobuilderSerializer"
   )
 
 
@@ -42,12 +64,9 @@ object Microbuilder extends AutoPlugin {
       "com.qifun" %% "haxe-scala-stm" % "0.1.4" % HaxeJava classifier HaxeJava.name
     ),
     jsonStreamDeserializer := {
-      val modelPath = baseDirectory.value / "src/haxe/model";
-      val modelNames = modelPath.list.map("\"model."+_.replaceFirst("[.][^.]+$", "")+"\"").mkString(",")
-      val packageNameValue = "proxy"
-      val packagePath = packageNameValue.split('.').foldLeft((sourceManaged in Haxe).value) { (parent, path) =>
-        parent / path
-      }
+      val modelPath = getModelDir(baseDirectory.value, "model")
+      val modelNames = getAllModelNamesFrom(modelPath, "model").mkString(",")
+      val packagePath = getOutputDir((sourceManaged in Haxe).value)
       packagePath.mkdirs()
       val classNameValue = (className in jsonStreamDeserializer).value
       val fileName = s"${classNameValue}.hx"
@@ -60,13 +79,31 @@ using jsonStream.Plugins;
 class $classNameValue {}
 """
 
-      if (!outputFile.exists || content != IO.read(outputFile, scala.io.Codec.UTF8.charSet)) {
-        IO.write(outputFile, content, scala.io.Codec.UTF8.charSet)
-      }
+      writeFile(outputFile, content)
+  },
+    jsonStreamSerializer := {
+      val modelPath = getModelDir(baseDirectory.value, "model")
+      val modelNames = getAllModelNamesFrom(modelPath, "model").mkString(",")
+      val packagePath = getOutputDir((sourceManaged in Haxe).value)
+      packagePath.mkdirs()
+      val classNameValue = (className in jsonStreamSerializer).value
+      val fileName = s"${classNameValue}.hx"
+      val outputFile = packagePath / fileName
+      val content =
+        raw"""package $packageNameValue;
+using jsonStream.Plugins;
+@:nativeGen
+@:build(jsonStream.JsonSerializer.generateSerializer(["com.thoughtworks.microbuilder.core.Failure",${modelNames}]))
+class $classNameValue {}
+"""
 
-      outputFile
-  }, sourceGenerators in Haxe <+= Def.task {
+      writeFile(outputFile, content)
+    },
+    sourceGenerators in Haxe <+= Def.task {
       Seq(jsonStreamDeserializer.value)
+    },
+    sourceGenerators in Haxe <+= Def.task {
+      Seq(jsonStreamSerializer.value)
     }
   )
 }
