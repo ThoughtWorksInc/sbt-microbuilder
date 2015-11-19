@@ -73,8 +73,13 @@ object Microbuilder extends AutoPlugin {
   }) ++ Seq(
     libraryDependencies ++= Seq("com.thoughtworks.microbuilder" %% "json-stream" % "2.0.0" % HaxeJava classifier HaxeJava.name,
       "com.thoughtworks.microbuilder" %% "json-stream" % "2.0.0",
-      "com.qifun" %% "haxe-scala-stm" % "0.1.4" % HaxeJava classifier HaxeJava.name
-    ),
+      "com.qifun" %% "haxe-scala-stm" % "0.1.4" % HaxeJava classifier HaxeJava.name,
+      "com.thoughtworks" %% "microbuilder-play" % "+",
+      "com.thoughtworks.microbuilder" %% "microbuilder-core" % "+",
+      "com.thoughtworks.microbuilder" %% "microbuilder-core" % "+" % HaxeJava classifier HaxeJava.name,
+      "com.thoughtworks.microbuilder" % "hamu" % "+" % HaxeJava classifier HaxeJava.name,
+      "com.thoughtworks.microbuilder" % "auto-parser" % "+" % HaxeJava classifier HaxeJava.name
+  ),
     jsonStreamDeserializer := {
       val modelPath = getModelDir(baseDirectory.value, "model")
       val modelNames = getAllModelNamesFrom(modelPath, "model").mkString(",")
