@@ -28,6 +28,14 @@ object Microbuilder extends AutoPlugin {
   def getAllModelNamesFrom(modelPath: File, packageName: String): Array[String] ={
     modelPath.list.map("\""+packageName+"."+_.replaceFirst("[.][^.]+$", "")+"\"")
   }
+
+  def genFileForModel(outputBaseDir: File, outputFileName: String, content: String): File = {
+    val packagePath = getOutputDir(outputBaseDir)
+    packagePath.mkdirs()
+    val outputFile = packagePath / s"${outputFileName}.hx"
+    writeFile(outputFile, content)
+  }
+
   object autoImport {
     val jsonStreamDeserializer = taskKey[File]("Generates deserizlier for models.")
     val jsonStreamSerializer = taskKey[File]("Generates serizlier for models.")
@@ -70,11 +78,7 @@ object Microbuilder extends AutoPlugin {
     jsonStreamDeserializer := {
       val modelPath = getModelDir(baseDirectory.value, "model")
       val modelNames = getAllModelNamesFrom(modelPath, "model").mkString(",")
-      val packagePath = getOutputDir((sourceManaged in Haxe).value)
-      packagePath.mkdirs()
       val classNameValue = (className in jsonStreamDeserializer).value
-      val fileName = s"${classNameValue}.hx"
-      val outputFile = packagePath / fileName
       val content =
         raw"""package $packageNameValue;
 using jsonStream.Plugins;
@@ -82,17 +86,12 @@ using jsonStream.Plugins;
 @:build(jsonStream.JsonDeserializer.generateDeserializer(["com.thoughtworks.microbuilder.core.Failure",${modelNames}]))
 class $classNameValue {}
 """
-
-      writeFile(outputFile, content)
+      genFileForModel((sourceManaged in Haxe).value, classNameValue, content)
   },
     jsonStreamSerializer := {
       val modelPath = getModelDir(baseDirectory.value, "model")
       val modelNames = getAllModelNamesFrom(modelPath, "model").mkString(",")
-      val packagePath = getOutputDir((sourceManaged in Haxe).value)
-      packagePath.mkdirs()
       val classNameValue = (className in jsonStreamSerializer).value
-      val fileName = s"${classNameValue}.hx"
-      val outputFile = packagePath / fileName
       val content =
         raw"""package $packageNameValue;
 using jsonStream.Plugins;
@@ -101,16 +100,12 @@ using jsonStream.Plugins;
 class $classNameValue {}
 """
 
-      writeFile(outputFile, content)
+      genFileForModel((sourceManaged in Haxe).value, classNameValue, content)
     },
     outgoingProxyFactoryGen := {
       val modelPath = getModelDir(baseDirectory.value, "rpc")
       val modelNames = getAllModelNamesFrom(modelPath, "rpc").mkString(",")
-      val packagePath = getOutputDir((sourceManaged in Haxe).value)
-      packagePath.mkdirs()
       val classNameValue = (className in outgoingProxyFactoryGen).value
-      val fileName = s"${classNameValue}.hx"
-      val outputFile = packagePath / fileName
       val content =
         raw"""package $packageNameValue;
 using jsonStream.Plugins;
@@ -121,16 +116,12 @@ using proxy.MicrobuilderSerializer;
 class $classNameValue {}
 """
 
-      writeFile(outputFile, content)
+      genFileForModel((sourceManaged in Haxe).value, classNameValue, content)
     },
     routeConfigurationFactoryGen := {
       val modelPath = getModelDir(baseDirectory.value, "rpc")
       val modelNames = getAllModelNamesFrom(modelPath, "rpc").mkString(",")
-      val packagePath = getOutputDir((sourceManaged in Haxe).value)
-      packagePath.mkdirs()
       val classNameValue = (className in routeConfigurationFactoryGen).value
-      val fileName = s"${classNameValue}.hx"
-      val outputFile = packagePath / fileName
       val content =
         raw"""package $packageNameValue;
 @:nativeGen
@@ -138,7 +129,7 @@ class $classNameValue {}
 class $classNameValue {}
 """
 
-      writeFile(outputFile, content)
+      genFileForModel((sourceManaged in Haxe).value, classNameValue, content)
     },
     sourceGenerators in Haxe <+= Def.task {
       Seq(jsonStreamDeserializer.value)
