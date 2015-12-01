@@ -10,23 +10,25 @@ object Microbuilder extends AutoPlugin {
 
   val packageNameValue = "proxy"
 
-  def getModelDir(baseDir: File, subDir: String): File ={
-    baseDir/ s"src/haxe/${subDir}"
+  def getModelDir(baseDir: File, subDir: String): File = {
+    baseDir / s"src/haxe/${subDir}"
   }
 
-  def getOutputDir(baseDir: File):File={
+  def getOutputDir(baseDir: File): File = {
     packageNameValue.split('.').foldLeft(baseDir) { (parent, path) =>
       parent / path
     }
   }
-  def writeFile(outPutFile: File, content: String)={
+
+  def writeFile(outPutFile: File, content: String) = {
     if (!outPutFile.exists || content != IO.read(outPutFile, scala.io.Codec.UTF8.charSet)) {
       IO.write(outPutFile, content, scala.io.Codec.UTF8.charSet)
     }
     outPutFile
   }
-  def getAllModelNamesFrom(modelPath: File, packageName: String): Array[String] ={
-    modelPath.list.map("\""+packageName+"."+_.replaceFirst("[.][^.]+$", "")+"\"")
+
+  def getAllModelNamesFrom(modelPath: File, packageName: String): Array[String] = {
+    modelPath.list.map("\"" + packageName + "." + _.replaceFirst("[.][^.]+$", "") + "\"")
   }
 
   def genFileForModel(outputBaseDir: File, outputFileName: String, content: String): File = {
@@ -50,7 +52,7 @@ object Microbuilder extends AutoPlugin {
   override def requires = HaxeJavaPlugin
 
   override def globalSettings = Seq(
-    className in jsonStreamDeserializer := "MicrobuilderDeserializer" ,
+    className in jsonStreamDeserializer := "MicrobuilderDeserializer",
     className in jsonStreamSerializer := "MicrobuilderSerializer",
     className in outgoingProxyFactoryGen := "MicrobuilderOutgoingProxyFactory",
     className in routeConfigurationFactoryGen := "MicrobuilderRouteConfigurationFactory"
@@ -66,20 +68,20 @@ object Microbuilder extends AutoPlugin {
     haxeOptions in c ++= haxelibOptions(haxelibs)
   }) ++
     (for (c <- AllTargetConfigurations ++ AllTestTargetConfigurations) yield {
-    haxeOptions in c ++= Seq("-dce", "no")
-  }) ++
+      haxeOptions in c ++= Seq("-dce", "no")
+    }) ++
     (for (c <- Seq(Compile, Test)) yield {
-    haxeOptions in c ++= Seq("-D", "scala")
-  }) ++ Seq(
+      haxeOptions in c ++= Seq("-D", "scala")
+    }) ++ Seq(
     libraryDependencies ++= Seq("com.thoughtworks.microbuilder" %% "json-stream" % "2.0.0" % HaxeJava classifier HaxeJava.name,
       "com.thoughtworks.microbuilder" %% "json-stream" % "2.0.0",
       "com.qifun" %% "haxe-scala-stm" % "0.1.4" % HaxeJava classifier HaxeJava.name,
-      "com.thoughtworks" %% "microbuilder-play" % "+",
-      "com.thoughtworks.microbuilder" %% "microbuilder-core" % "+",
-      "com.thoughtworks.microbuilder" %% "microbuilder-core" % "+" % HaxeJava classifier HaxeJava.name,
-      "com.thoughtworks.microbuilder" % "hamu" % "+" % HaxeJava classifier HaxeJava.name,
-      "com.thoughtworks.microbuilder" % "auto-parser" % "+" % HaxeJava classifier HaxeJava.name
-  ),
+      "com.thoughtworks.microbuilder" %% "microbuilder-play" % "0.1.0",
+      "com.thoughtworks.microbuilder" %% "microbuilder-core" % "0.1.0",
+      "com.thoughtworks.microbuilder" %% "microbuilder-core" % "0.1.0" % HaxeJava classifier HaxeJava.name,
+      "com.thoughtworks.microbuilder" % "hamu" % "2.0.0" % HaxeJava classifier HaxeJava.name,
+      "com.thoughtworks.microbuilder" % "auto-parser" % "2.0.0" % HaxeJava classifier HaxeJava.name
+    ),
     jsonStreamDeserializer := {
       val modelPath = getModelDir(baseDirectory.value, "model")
       val modelNames = getAllModelNamesFrom(modelPath, "model").mkString(",")
@@ -92,7 +94,7 @@ using jsonStream.Plugins;
 class $classNameValue {}
 """
       genFileForModel((sourceManaged in Haxe).value, classNameValue, content)
-  },
+    },
     jsonStreamSerializer := {
       val modelPath = getModelDir(baseDirectory.value, "model")
       val modelNames = getAllModelNamesFrom(modelPath, "model").mkString(",")
