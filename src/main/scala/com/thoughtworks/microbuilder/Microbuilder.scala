@@ -79,8 +79,8 @@ object Microbuilder extends AutoPlugin {
       "com.thoughtworks.microbuilder" %% "microbuilder-play" % "0.1.0",
       "com.thoughtworks.microbuilder" %% "microbuilder-core" % "0.1.0",
       "com.thoughtworks.microbuilder" %% "microbuilder-core" % "0.1.0" % HaxeJava classifier HaxeJava.name,
-      "com.thoughtworks.microbuilder" % "hamu" % "2.0.0" % HaxeJava classifier HaxeJava.name,
-      "com.thoughtworks.microbuilder" % "auto-parser" % "2.0.0" % HaxeJava classifier HaxeJava.name
+      "com.thoughtworks.microbuilder" % "hamu" % "0.2.0" % HaxeJava classifier HaxeJava.name,
+      "com.thoughtworks.microbuilder" % "auto-parser" % "0.2.0" % HaxeJava classifier HaxeJava.name
     ),
     jsonStreamDeserializer := {
       val modelPath = getModelDir(baseDirectory.value, "model")
