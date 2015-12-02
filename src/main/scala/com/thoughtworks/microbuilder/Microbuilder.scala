@@ -67,6 +67,11 @@ object Microbuilder extends AutoPlugin {
   override lazy val projectSettings: Seq[Setting[_]] = (for (c <- AllTargetConfigurations ++ AllTestTargetConfigurations) yield {
     haxeOptions in c ++= haxelibOptions(haxelibs)
   }) ++
+    (for (c <- AllTargetConfigurations) yield {
+      haxeOptions in c ++= Seq(
+        "--macro", "hamu.ExprEvaluator.parseAndEvaluate(\"autoParser.AutoFormatter.BUILDER.defineMacroClass([\\\"com.thoughtworks.microbuilder.core.UriTemplate\\\"],\\\"com.thoughtworks.microbuilder.core.UriTemplateFormatter\\\")\")",
+        "--macro", "hamu.ExprEvaluator.parseAndEvaluate(\"autoParser.AutoParser.BUILDER.defineMacroClass([\\\"com.thoughtworks.microbuilder.core.UriTemplate\\\"],\\\"com.thoughtworks.microbuilder.core.UriTemplateParser\\\")\")")
+    }) ++
     (for (c <- AllTargetConfigurations ++ AllTestTargetConfigurations) yield {
       haxeOptions in c ++= Seq("-dce", "no")
     }) ++
@@ -76,9 +81,9 @@ object Microbuilder extends AutoPlugin {
     libraryDependencies ++= Seq("com.thoughtworks.microbuilder" %% "json-stream" % "2.0.0" % HaxeJava classifier HaxeJava.name,
       "com.thoughtworks.microbuilder" %% "json-stream" % "2.0.0",
       "com.qifun" %% "haxe-scala-stm" % "0.1.4" % HaxeJava classifier HaxeJava.name,
-      "com.thoughtworks.microbuilder" %% "microbuilder-play" % "0.1.0",
-      "com.thoughtworks.microbuilder" %% "microbuilder-core" % "0.1.0",
-      "com.thoughtworks.microbuilder" %% "microbuilder-core" % "0.1.0" % HaxeJava classifier HaxeJava.name,
+      "com.thoughtworks.microbuilder" %% "microbuilder-play" % "0.1.1",
+      "com.thoughtworks.microbuilder" %% "microbuilder-core" % "0.1.1",
+      "com.thoughtworks.microbuilder" %% "microbuilder-core" % "0.1.1" % HaxeJava classifier HaxeJava.name,
       "com.thoughtworks.microbuilder" % "hamu" % "0.2.0" % HaxeJava classifier HaxeJava.name,
       "com.thoughtworks.microbuilder" % "auto-parser" % "0.2.0" % HaxeJava classifier HaxeJava.name
     ),
