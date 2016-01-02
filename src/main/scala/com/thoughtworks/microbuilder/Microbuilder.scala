@@ -12,10 +12,6 @@ object Microbuilder extends AutoPlugin {
 
   val packageNameValue = "proxy"
 
-  def getModelDir(baseDir: File, subDir: String): File = {
-    baseDir / s"src/haxe/${subDir}"
-  }
-
   def getOutputDir(baseDir: File): File = {
     packageNameValue.split('.').foldLeft(baseDir) { (parent, path) =>
       parent / path
@@ -27,10 +23,6 @@ object Microbuilder extends AutoPlugin {
       IO.write(outPutFile, content, scala.io.Codec.UTF8.charSet)
     }
     outPutFile
-  }
-
-  def getAllModelNamesFrom(modelPath: File, packageName: String): Array[String] = {
-    modelPath.list.map("\"" + packageName + "." + _.replaceFirst("[.][^.]+$", "") + "\"")
   }
 
   def genFileForModel(outputBaseDir: File, outputFileName: String, content: String): File = {
