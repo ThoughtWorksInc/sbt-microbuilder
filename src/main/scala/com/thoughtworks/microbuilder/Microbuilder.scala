@@ -6,6 +6,8 @@ import sbt.AutoPlugin
 import sbt._
 import sbt.Keys._
 
+import scala.util.parsing.json.JSONArray
+
 object Microbuilder extends AutoPlugin {
 
   val packageNameValue = "proxy"
@@ -39,10 +41,15 @@ object Microbuilder extends AutoPlugin {
   }
 
   object autoImport {
+
+    val jsonStreamServiceModules = settingKey[Seq[String]]("Haxe modules that contains data structures for json-stream.")
+    val jsonStreamModelModules = settingKey[Seq[String]]("Haxe modules that contains data structures for json-stream.")
+
     val jsonStreamDeserializer = taskKey[File]("Generates deserizlier for models.")
     val jsonStreamSerializer = taskKey[File]("Generates serizlier for models.")
-    val outgoingProxyFactoryGen = taskKey[File]("Generates outgoing proxy factory")
-    val routeConfigurationFactoryGen = taskKey[File]("Generates route configuration factory")
+    val incomingProxyFactory = taskKey[File]("Generates incoming proxy factory")
+    val outgoingProxyFactory = taskKey[File]("Generates outgoing proxy factory")
+    val routeConfigurationFactory = taskKey[File]("Generates route configuration factory")
 
     val className = settingKey[String]("Class name of a specific generating class.")
   }
@@ -54,8 +61,9 @@ object Microbuilder extends AutoPlugin {
   override def globalSettings = Seq(
     className in jsonStreamDeserializer := "MicrobuilderDeserializer",
     className in jsonStreamSerializer := "MicrobuilderSerializer",
-    className in outgoingProxyFactoryGen := "MicrobuilderOutgoingProxyFactory",
-    className in routeConfigurationFactoryGen := "MicrobuilderRouteConfigurationFactory"
+    className in incomingProxyFactory := "MicrobuilderIncomingProxyFactory",
+    className in outgoingProxyFactory := "MicrobuilderOutgoingProxyFactory",
+    className in routeConfigurationFactory := "MicrobuilderRouteConfigurationFactory"
   )
 
 
@@ -63,6 +71,8 @@ object Microbuilder extends AutoPlugin {
     "continuation" -> DependencyVersion.SpecificVersion("1.3.2")
   )
 
+
+  private val HaxeFileRegex = """(.+)\.hx""".r
 
   override lazy val projectSettings: Seq[Setting[_]] = (for (c <- AllTargetConfigurations ++ AllTestTargetConfigurations) yield {
     haxeOptions in c ++= haxelibOptions(haxelibs)
@@ -88,57 +98,84 @@ object Microbuilder extends AutoPlugin {
       "com.thoughtworks.microbuilder" % "auto-parser" % "0.2.0" % HaxeJava classifier HaxeJava.name
     ),
     haxelibDependencies ++= haxelibs,
+    jsonStreamModelModules := {
+      for  {
+        haxeSourceDirectory <- (sourceDirectories in Haxe).value
+        modelDirectoy = (haxeSourceDirectory / "model")
+        if modelDirectoy.exists
+        HaxeFileRegex(moduleName) <- modelDirectoy.list
+      } yield raw"""model.$moduleName"""
+    },
+    jsonStreamServiceModules := {
+      for  {
+        haxeSourceDirectory <- (sourceDirectories in Haxe).value
+        modelDirectoy = (haxeSourceDirectory / "rpc")
+        if modelDirectoy.exists
+        HaxeFileRegex(moduleName) <- modelDirectoy.list
+      } yield raw"""rpc.$moduleName"""
+    },
     jsonStreamDeserializer := {
-      val modelPath = getModelDir(baseDirectory.value, "model")
-      val modelNames = getAllModelNamesFrom(modelPath, "model").mkString(",")
+      val modelJson = JSONArray("com.thoughtworks.microbuilder.core.Failure" :: jsonStreamModelModules.value.toList)
       val classNameValue = (className in jsonStreamDeserializer).value
       val content =
         raw"""package $packageNameValue;
 using jsonStream.Plugins;
 @:nativeGen
-@:build(jsonStream.JsonDeserializer.generateDeserializer(["com.thoughtworks.microbuilder.core.Failure",${modelNames}]))
+@:build(jsonStream.JsonDeserializer.generateDeserializer($modelJson))
 class $classNameValue {}
 """
       genFileForModel((sourceManaged in Haxe).value, classNameValue, content)
     },
     jsonStreamSerializer := {
-      val modelPath = getModelDir(baseDirectory.value, "model")
-      val modelNames = getAllModelNamesFrom(modelPath, "model").mkString(",")
+      val modelJson = JSONArray("com.thoughtworks.microbuilder.core.Failure" :: jsonStreamModelModules.value.toList)
       val classNameValue = (className in jsonStreamSerializer).value
       val content =
         raw"""package $packageNameValue;
 using jsonStream.Plugins;
 @:nativeGen
-@:build(jsonStream.JsonSerializer.generateSerializer(["com.thoughtworks.microbuilder.core.Failure",${modelNames}]))
+@:build(jsonStream.JsonSerializer.generateSerializer($modelJson))
 class $classNameValue {}
 """
 
       genFileForModel((sourceManaged in Haxe).value, classNameValue, content)
     },
-    outgoingProxyFactoryGen := {
-      val modelPath = getModelDir(baseDirectory.value, "rpc")
-      val modelNames = getAllModelNamesFrom(modelPath, "rpc").mkString(",")
-      val classNameValue = (className in outgoingProxyFactoryGen).value
+    outgoingProxyFactory := {
+      val rpcJson = JSONArray("com.thoughtworks.microbuilder.core.Failure" :: jsonStreamServiceModules.value.toList)
+      val classNameValue = (className in outgoingProxyFactory).value
       val content =
         raw"""package $packageNameValue;
 using jsonStream.Plugins;
 using proxy.MicrobuilderDeserializer;
 using proxy.MicrobuilderSerializer;
 @:nativeGen
-@:build(jsonStream.rpc.OutgoingProxyFactory.generateOutgoingProxyFactory([${modelNames}]))
+@:build(jsonStream.rpc.OutgoingProxyFactory.generateOutgoingProxyFactory($rpcJson))
 class $classNameValue {}
 """
 
       genFileForModel((sourceManaged in Haxe).value, classNameValue, content)
     },
-    routeConfigurationFactoryGen := {
-      val modelPath = getModelDir(baseDirectory.value, "rpc")
-      val modelNames = getAllModelNamesFrom(modelPath, "rpc").mkString(",")
-      val classNameValue = (className in routeConfigurationFactoryGen).value
+    incomingProxyFactory := {
+      val rpcJson = JSONArray("com.thoughtworks.microbuilder.core.Failure" :: jsonStreamServiceModules.value.toList)
+      val classNameValue = (className in incomingProxyFactory).value
+      val content =
+        raw"""package $packageNameValue;
+using jsonStream.Plugins;
+using proxy.MicrobuilderDeserializer;
+using proxy.MicrobuilderSerializer;
+@:nativeGen
+@:build(jsonStream.rpc.IncomingProxyFactory.generateIncomingProxyFactory($rpcJson))
+class $classNameValue {}
+"""
+
+      genFileForModel((sourceManaged in Haxe).value, classNameValue, content)
+    },
+    routeConfigurationFactory := {
+      val rpcJson = JSONArray("com.thoughtworks.microbuilder.core.Failure" :: jsonStreamServiceModules.value.toList)
+      val classNameValue = (className in routeConfigurationFactory).value
       val content =
         raw"""package $packageNameValue;
 @:nativeGen
-@:build(com.thoughtworks.microbuilder.core.RouteConfigurationFactory.generateRouteConfigurationFactory([${modelNames}]))
+@:build(com.thoughtworks.microbuilder.core.RouteConfigurationFactory.generateRouteConfigurationFactory($rpcJson))
 class $classNameValue {}
 """
 
@@ -151,10 +188,13 @@ class $classNameValue {}
       Seq(jsonStreamSerializer.value)
     },
     sourceGenerators in Haxe <+= Def.task {
-      Seq(outgoingProxyFactoryGen.value)
+      Seq(outgoingProxyFactory.value)
     },
     sourceGenerators in Haxe <+= Def.task {
-      Seq(routeConfigurationFactoryGen.value)
+      Seq(incomingProxyFactory.value)
+    },
+    sourceGenerators in Haxe <+= Def.task {
+      Seq(routeConfigurationFactory.value)
     }
   )
 }
