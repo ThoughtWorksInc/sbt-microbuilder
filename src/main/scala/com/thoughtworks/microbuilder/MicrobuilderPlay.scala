@@ -8,7 +8,7 @@ import sbt.Keys._
 
 import scala.util.parsing.json.JSONArray
 
-object Microbuilder extends AutoPlugin {
+object MicrobuilderPlay extends AutoPlugin {
 
   val packageNameValue = "proxy"
 
