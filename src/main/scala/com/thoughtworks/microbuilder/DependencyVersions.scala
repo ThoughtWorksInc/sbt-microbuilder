@@ -5,7 +5,7 @@ package com.thoughtworks.microbuilder
   */
 private[microbuilder] object DependencyVersions {
 
-  final val JsonStream = "3.0.0"
+  final val JsonStreamCore = "3.0.0"
 
   final val MicrobuilderCore = "0.2.0"
 
