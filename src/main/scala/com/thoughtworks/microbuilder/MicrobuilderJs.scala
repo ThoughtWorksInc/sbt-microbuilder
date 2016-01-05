@@ -12,7 +12,7 @@ object MicrobuilderJs extends AutoPlugin {
   override lazy val projectSettings: Seq[Setting[_]] = super.projectSettings ++ Seq(
     libraryDependencies += "com.thoughtworks.microbuilder" %% "json-stream" % DependencyVersions.JsonStream % HaxeJs classifier HaxeJs.name,
     libraryDependencies += "com.thoughtworks.microbuilder" %% "microbuilder-core" % DependencyVersions.MicrobuilderCore % HaxeJs classifier HaxeJs.name,
-    libraryDependencies += "com.thoughtworks.microbuilder" %% "microbuilder-js" % DependencyVersions.MicrobuilderJs % HaxeJs classifier HaxeJs.name,
+    libraryDependencies += "com.thoughtworks.microbuilder" % "microbuilder-js" % DependencyVersions.MicrobuilderJs % HaxeJs classifier HaxeJs.name,
     libraryDependencies += "com.thoughtworks.microbuilder" % "hamu" % DependencyVersions.Hamu % HaxeJs classifier HaxeJs.name,
     libraryDependencies += "com.thoughtworks.microbuilder" % "auto-parser" % DependencyVersions.AutoParser % HaxeJs classifier HaxeJs.name
   )
