@@ -5,15 +5,13 @@ package com.thoughtworks.microbuilder
   */
 private[microbuilder] object DependencyVersions {
 
-  final val JsonStream = "2.0.3"
+  final val JsonStream = "3.0.0"
 
-  final val HaxeScalaStm = "0.1.4"
+  final val MicrobuilderCore = "0.2.0"
 
-  final val MicrobuilderCore = "0.1.2"
+  final val MicrobuilderJs = "0.2.0"
 
-  final val MicrobuilderJs = "0.1.1"
-
-  final val MicrobuilderPlay = "0.1.1"
+  final val MicrobuilderPlay = "0.2.0"
 
   final val Hamu = "0.2.0"
 

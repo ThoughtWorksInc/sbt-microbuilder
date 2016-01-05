@@ -20,7 +20,6 @@ object MicrobuilderPlay extends AutoPlugin {
       Seq(
         libraryDependencies += "com.thoughtworks.microbuilder" %% "json-stream" % DependencyVersions.JsonStream % HaxeJava classifier HaxeJava.name,
         libraryDependencies += "com.thoughtworks.microbuilder" %% "json-stream" % DependencyVersions.JsonStream,
-        libraryDependencies += "com.qifun" %% "haxe-scala-stm" % DependencyVersions.HaxeScalaStm % HaxeJava classifier HaxeJava.name,
         libraryDependencies += "com.thoughtworks.microbuilder" %% "microbuilder-play" % DependencyVersions.MicrobuilderPlay,
         libraryDependencies += "com.thoughtworks.microbuilder" %% "microbuilder-core" % DependencyVersions.MicrobuilderCore,
         libraryDependencies += "com.thoughtworks.microbuilder" %% "microbuilder-core" % DependencyVersions.MicrobuilderCore % HaxeJava classifier HaxeJava.name,
