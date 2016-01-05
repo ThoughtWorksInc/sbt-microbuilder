@@ -9,9 +9,9 @@ private[microbuilder] object DependencyVersions {
 
   final val HaxeScalaStm = "0.1.4"
 
-  final val MicrobuilderCore = "0.1.1"
+  final val MicrobuilderCore = "0.1.2"
 
-  final val MicrobuilderJs = "0.0.0"
+  final val MicrobuilderJs = "0.1.1"
 
   final val MicrobuilderPlay = "0.1.1"
 
