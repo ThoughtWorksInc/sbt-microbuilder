@@ -38,8 +38,8 @@ object MicrobuilderCommon extends AutoPlugin {
 
   object autoImport {
 
-    val jsonStreamServiceModules = settingKey[Seq[String]]("Haxe modules that contains service definitions for json-stream.")
-    val jsonStreamModelModules = settingKey[Seq[String]]("Haxe modules that contains data structures for json-stream.")
+    val jsonStreamServiceModules = taskKey[Seq[String]]("Haxe modules that contains service definitions for json-stream.")
+    val jsonStreamModelModules = taskKey[Seq[String]]("Haxe modules that contains data structures for json-stream.")
 
     val jsonStreamDeserializer = taskKey[File]("Generates deserizlier for models.")
     val jsonStreamSerializer = taskKey[File]("Generates serizlier for models.")
@@ -75,9 +75,6 @@ object MicrobuilderCommon extends AutoPlugin {
       haxeOptions in c ++= Seq(
         "--macro", "hamu.ExprEvaluator.parseAndEvaluate(\"autoParser.AutoFormatter.BUILDER.defineMacroClass([\\\"com.thoughtworks.microbuilder.core.UriTemplate\\\"],\\\"com.thoughtworks.microbuilder.core.UriTemplateFormatter\\\")\")",
         "--macro", "hamu.ExprEvaluator.parseAndEvaluate(\"autoParser.AutoParser.BUILDER.defineMacroClass([\\\"com.thoughtworks.microbuilder.core.UriTemplate\\\"],\\\"com.thoughtworks.microbuilder.core.UriTemplateParser\\\")\")")
-    }) ++
-    (for (c <- AllTargetConfigurations ++ AllTestTargetConfigurations) yield {
-      haxeOptions in c ++= Seq("-dce", "no")
     }) ++
     (for (c <- Seq(Compile, Test)) yield {
       haxeOptions in c ++= Seq("-D", "scala")
