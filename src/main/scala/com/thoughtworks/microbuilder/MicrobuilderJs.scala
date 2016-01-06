@@ -1,19 +1,21 @@
 package com.thoughtworks.microbuilder
 
-import com.thoughtworks.microbuilder.sbtHaxe.BaseHaxePlugin.autoImport._
-import com.thoughtworks.microbuilder.sbtHaxe.HaxeJsPlugin
 import sbt.Keys._
-import sbt.{AutoPlugin, _}
+import sbt._
+import com.thoughtworks.microbuilder.sbtHaxe.BaseHaxePlugin.autoImport._
 
+/**
+  * @author 杨博 (Yang Bo) &lt;pop.atry@gmail.com&gt;
+  */
 object MicrobuilderJs extends AutoPlugin {
 
-  override def requires = HaxeJsPlugin && MicrobuilderCommon
+  override def requires = MicrobuilderJsSdk
 
-  override lazy val projectSettings: Seq[Setting[_]] = super.projectSettings ++ Seq(
-    libraryDependencies += "com.thoughtworks.microbuilder" % "json-stream-core" % DependencyVersions.JsonStreamCore % HaxeJs classifier HaxeJs.name,
-    libraryDependencies += "com.thoughtworks.microbuilder" % "microbuilder-core" % DependencyVersions.MicrobuilderCore % HaxeJs classifier HaxeJs.name,
-    libraryDependencies += "com.thoughtworks.microbuilder" % "microbuilder-js" % DependencyVersions.MicrobuilderJs % HaxeJs classifier HaxeJs.name,
-    libraryDependencies += "com.thoughtworks.microbuilder" % "hamu" % DependencyVersions.Hamu % HaxeJs classifier HaxeJs.name,
-    libraryDependencies += "com.thoughtworks.microbuilder" % "auto-parser" % DependencyVersions.AutoParser % HaxeJs classifier HaxeJs.name
-  )
+  override lazy val projectSettings: Seq[Setting[_]] = {
+    super.projectSettings ++ Seq(
+      libraryDependencies += "com.thoughtworks.microbuilder" % "microbuilder-js" % DependencyVersions.MicrobuilderJs % HaxeJs classifier HaxeJs.name
+    )
+  }
+
+
 }
