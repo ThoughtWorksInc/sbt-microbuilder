@@ -1,6 +1,5 @@
 package com.thoughtworks.microbuilder
 
-import com.thoughtworks.microbuilder.DependencyVersions
 import com.thoughtworks.microbuilder.sbtHaxe.BaseHaxePlugin.autoImport._
 import com.thoughtworks.microbuilder.sbtHaxe.HaxeJavaPlugin
 import sbt.AutoPlugin
