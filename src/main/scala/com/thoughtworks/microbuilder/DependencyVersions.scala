@@ -9,9 +9,9 @@ private[microbuilder] object DependencyVersions {
 
   final val MicrobuilderCore = "0.3.0"
 
-  final val MicrobuilderJs = "0.3.2"
+  final val MicrobuilderJs = "0.4.0"
 
-  final val MicrobuilderPlay = "0.2.0"
+  final val MicrobuilderPlay = "1.0.0"
 
   final val Hamu = "0.2.0"
 
