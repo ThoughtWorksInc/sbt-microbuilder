@@ -17,3 +17,7 @@ project/plugins/project/
 .worksheet
 
 .idea/
+
+# Files created for deployment
+secret/
+local.sbt
