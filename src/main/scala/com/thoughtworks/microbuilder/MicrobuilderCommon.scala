@@ -72,8 +72,8 @@ object MicrobuilderCommon extends AutoPlugin {
   }) ++
     (for (c <- AllTargetConfigurations) yield {
       haxeOptions in c ++= Seq(
-        "--macro", "hamu.ExprEvaluator.parseAndEvaluate(\"autoParser.AutoFormatter.BUILDER.defineMacroClass([\\\"com.thoughtworks.microbuilder.core.UriTemplate\\\"],\\\"com.thoughtworks.microbuilder.core.UriTemplateFormatter\\\")\")",
-        "--macro", "hamu.ExprEvaluator.parseAndEvaluate(\"autoParser.AutoParser.BUILDER.defineMacroClass([\\\"com.thoughtworks.microbuilder.core.UriTemplate\\\"],\\\"com.thoughtworks.microbuilder.core.UriTemplateParser\\\")\")")
+        "--macro", "hamu.ExprEvaluator.parseAndEvaluate(\"autoParser.AutoFormatter.BUILDER.defineMacroClass([\\\"com.thoughtworks.microbuilder.core.uriTemplate.UriTemplate\\\"],\\\"com.thoughtworks.microbuilder.core.UriTemplateFormatter\\\")\")",
+        "--macro", "hamu.ExprEvaluator.parseAndEvaluate(\"autoParser.AutoParser.BUILDER.defineMacroClass([\\\"com.thoughtworks.microbuilder.core.uriTemplate.UriTemplate\\\"],\\\"com.thoughtworks.microbuilder.core.UriTemplateParser\\\")\")")
     }) ++
     (for (c <- Seq(Compile, Test)) yield {
       haxeOptions in c ++= Seq("-D", "scala")
