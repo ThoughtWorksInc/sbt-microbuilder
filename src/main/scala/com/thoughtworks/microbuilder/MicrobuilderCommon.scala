@@ -94,7 +94,7 @@ object MicrobuilderCommon extends AutoPlugin {
     haxelibDependencies ++= haxelibs,
     target in makeSwaggerSchemaJson := crossTarget.value / "swagger" / "swaggerSchema.json",
     makeSwaggerSchemaJson := {
-      var outputFile = (target in makeSwaggerSchemaJson).value
+      val outputFile = (target in makeSwaggerSchemaJson).value
       outputFile.getParentFile.mkdirs()
 
       val urls = (for {
