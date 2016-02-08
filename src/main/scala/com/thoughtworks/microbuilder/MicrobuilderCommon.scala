@@ -92,6 +92,7 @@ object MicrobuilderCommon extends AutoPlugin {
     packageName in outgoingProxyFactory := s"${packageName.value}.proxy",
     packageName in routeConfigurationFactory := s"${packageName.value}.proxy",
     haxelibDependencies ++= haxelibs,
+    haxelibDependencies += "microbuider-core" -> DependencyVersion.SpecificVersion(DependencyVersions.MicrobuilderCore),
     target in makeSwaggerSchemaJson := crossTarget.value / "swagger" / "swaggerSchema.json",
     makeSwaggerSchemaJson := {
       val outputFile = (target in makeSwaggerSchemaJson).value
