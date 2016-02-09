@@ -15,6 +15,6 @@ private[microbuilder] object DependencyVersions {
 
   final val Hamu = "0.2.1"
 
-  final val AutoParser = "0.2.0"
+  final val AutoParser = "0.2.1"
 
 }
