@@ -4,7 +4,7 @@ name := "sbt-microbuilder"
 
 sbtPlugin := true
 
-addSbtPlugin("com.thoughtworks.microbuilder" % "sbt-haxe" % "3.0.9")
+addSbtPlugin("com.thoughtworks.microbuilder" % "sbt-haxe" % "3.0.10")
 
 homepage := Some(url("https://github.com/ThoughtWorksInc/sbt-haxe"))
 
