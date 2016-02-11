@@ -7,9 +7,9 @@ private[microbuilder] object DependencyVersions {
 
   final val JsonStreamCore = "3.0.2"
 
-  final val MicrobuilderCore = "3.0.1"
+  final val MicrobuilderCore = "3.0.2"
 
-  final val MicrobuilderJs = "2.0.0"
+  final val MicrobuilderJs = "2.0.1"
 
   final val MicrobuilderPlay = "4.0.0"
 
