@@ -4,6 +4,8 @@ name := "sbt-microbuilder"
 
 sbtPlugin := true
 
+resolvers += "Sonatype Public" at "https://oss.sonatype.org/content/groups/public"
+
 addSbtPlugin("com.thoughtworks.microbuilder" % "sbt-haxe" % "3.0.10")
 
 homepage := Some(url("https://github.com/ThoughtWorksInc/sbt-haxe"))
