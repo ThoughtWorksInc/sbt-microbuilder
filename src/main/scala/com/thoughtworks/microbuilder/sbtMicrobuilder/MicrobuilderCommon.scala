@@ -47,6 +47,11 @@ object MicrobuilderCommon extends AutoPlugin {
 
     val packageName = settingKey[String]("Package name of a specific generating class.")
     val className = settingKey[String]("Class name of a specific generating class.")
+
+    def microbuilderHaxeDependencies(configuration: Configuration) = {
+      MicrobuilderSettings.haxeDependencies(configuration)
+    }
+
   }
 
   import autoImport._
