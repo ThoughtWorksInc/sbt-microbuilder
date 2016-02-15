@@ -1,4 +1,4 @@
-package com.thoughtworks.microbuilder
+package com.thoughtworks.microbuilder.sbtMicrobuilder
 
 import java.net.URLClassLoader
 

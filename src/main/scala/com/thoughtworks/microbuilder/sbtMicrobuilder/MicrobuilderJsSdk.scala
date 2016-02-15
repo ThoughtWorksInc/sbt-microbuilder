@@ -1,4 +1,4 @@
-package com.thoughtworks.microbuilder
+package com.thoughtworks.microbuilder.sbtMicrobuilder
 
 import com.thoughtworks.microbuilder.sbtHaxe.BaseHaxePlugin.autoImport._
 import com.thoughtworks.microbuilder.sbtHaxe.HaxeJsPlugin

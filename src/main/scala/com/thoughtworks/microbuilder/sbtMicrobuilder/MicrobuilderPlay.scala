@@ -1,4 +1,4 @@
-package com.thoughtworks.microbuilder
+package com.thoughtworks.microbuilder.sbtMicrobuilder
 
 import sbt.Keys._
 import sbt._
