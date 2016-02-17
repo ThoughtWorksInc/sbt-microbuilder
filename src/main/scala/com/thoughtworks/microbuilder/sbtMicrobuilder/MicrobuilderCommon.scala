@@ -151,7 +151,7 @@ import haxe.format.JsonPrinter;
 import jsonStream.SwaggerExporter;
 using jsonStream.SwaggerPlugins;
 @:final
-@:nativeGen
+#if (!cpp) @:nativeGen #end
 class $classNameValue {
   public static function export():String return {
     var schemaJson = SwaggerExporter.export(${jsonStreamModelModules.value.mkString("[\"", "\",\"", "\"]")});
@@ -171,7 +171,7 @@ class $classNameValue {
       val content =
         raw"""package $packageNameValue;
 using jsonStream.Plugins;
-@:nativeGen
+#if (!cpp) @:nativeGen #end
 @:build(jsonStream.JsonDeserializer.generateDeserializer($modelJson))
 class $classNameValue {}
 """
@@ -184,7 +184,7 @@ class $classNameValue {}
       val content =
         raw"""package $packageNameValue;
 using jsonStream.Plugins;
-@:nativeGen
+#if (!cpp) @:nativeGen #end
 @:build(jsonStream.JsonSerializer.generateSerializer($modelJson))
 class $classNameValue {}
 """
@@ -200,7 +200,7 @@ using jsonStream.Plugins;
 using ${(packageName in jsonStreamDeserializer).value}.${(className in jsonStreamDeserializer).value};
 using ${(packageName in jsonStreamSerializer).value}.${(className in jsonStreamSerializer).value};
 @:expose
-@:nativeGen
+#if (!cpp) @:nativeGen #end
 @:build(jsonStream.rpc.OutgoingProxyFactory.generateOutgoingProxyFactory($rpcJson))
 class $classNameValue {}
 """
@@ -216,7 +216,7 @@ using jsonStream.Plugins;
 using ${(packageName in jsonStreamDeserializer).value}.${(className in jsonStreamDeserializer).value};
 using ${(packageName in jsonStreamSerializer).value}.${(className in jsonStreamSerializer).value};
 @:expose
-@:nativeGen
+#if (!cpp) @:nativeGen #end
 @:build(jsonStream.rpc.IncomingProxyFactory.generateIncomingProxyFactory($rpcJson))
 class $classNameValue {}
 """
@@ -229,7 +229,7 @@ class $classNameValue {}
       val content =
         raw"""package $packageNameValue;
 @:expose
-@:nativeGen
+#if (!cpp) @:nativeGen #end
 @:build(com.thoughtworks.microbuilder.core.RouteConfigurationFactory.generateRouteConfigurationFactory($rpcJson))
 class $classNameValue {}
 """
