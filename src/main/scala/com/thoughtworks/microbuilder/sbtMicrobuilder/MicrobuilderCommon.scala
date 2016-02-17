@@ -66,6 +66,7 @@ object MicrobuilderCommon extends AutoPlugin {
   )
 
   val haxelibs = Map(
+    "microbuilder-HUGS" -> DependencyVersion.SpecificVersion("2.0.1"),
     "continuation" -> DependencyVersion.SpecificVersion("1.3.2")
   )
 
