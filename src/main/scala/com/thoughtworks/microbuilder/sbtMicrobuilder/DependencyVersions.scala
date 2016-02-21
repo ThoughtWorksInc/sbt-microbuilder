@@ -5,11 +5,11 @@ package com.thoughtworks.microbuilder.sbtMicrobuilder
   */
 private[microbuilder] object DependencyVersions {
 
-  final val JsonStreamCore = "3.0.2"
+  final val JsonStreamCore = "3.0.3"
 
-  final val MicrobuilderCore = "3.0.3"
+  final val MicrobuilderCore = "3.0.4"
 
-  final val MicrobuilderJs = "2.0.2"
+  final val MicrobuilderJs = "2.0.3"
 
   final val MicrobuilderPlay = "4.0.0"
 
